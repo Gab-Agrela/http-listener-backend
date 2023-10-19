@@ -1,11 +1,13 @@
-const express = require('express');
-const { insertController } = require('./domain/operations/insert.controller');
-require('dotenv/config')
+const express = require("express");
+require("dotenv/config");
 
-const app = express()
-app.use(express.json())
-const port = process.env.PORT || 3001
+const { insertController } = require("./domain/operations/insert.controller");
+const { insertMiddleware } = require("./domain/operations/insert.middleware");
 
-app.post('/webhook', insertController)
+const app = express();
+app.use(express.json());
+const port = process.env.PORT || 3001;
 
-app.listen(port, () => console.log(`Server running at port ${port}`))
+app.post("/insert", insertMiddleware, insertController);
+
+app.listen(port, () => console.log(`Server running at port ${port}`));
