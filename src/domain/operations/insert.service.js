@@ -2,23 +2,21 @@ const { google } = require('googleapis');
 const { getAuthToken } = require('../auth');
 const sheets = google.sheets('v4');
 
-const insertService = async ({ range, sheetName, spreadsheetId, newData }) => {
+const insertService = async ({ range, sheetName, spreadsheetId, data }) => {
   const sheetsAPI = sheets.spreadsheets.values;
   const auth = await getAuthToken();
-
+  const transformedData = Object.values(data).map((line) => line.split('/'))
   try {
-    const response = sheetsAPI.append({
-      spreadsheetId,
+    const response = await sheetsAPI.append({
+      spreadsheetId: spreadsheetId.toString(),
       range: `${sheetName}!${range}`,
       valueInputOption: 'RAW',
-      insertDataOption: 'INSERT_ROWS',
-      resource: { values: [newData] },
+      resource: { values: transformedData, majorDimension: "ROWS" },
       auth,
     });
-
-    return `Nova linha adicionada: ${JSON.stringify(response.data)}`;
+    return 'Dado inserido com sucesso';
   } catch (error) {
-    throw Error(`Erro ao adicionar a nova linha: ${error}`);
+    throw Error(error.message);
   }
 }
 

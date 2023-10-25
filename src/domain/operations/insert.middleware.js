@@ -1,5 +1,5 @@
 const insertMiddleware = (req, res, next) => {
-  const { range, sheetName, spreadsheetId, newData } = req.body;
+  const { range, sheetName, spreadsheetId, data } = req.body;
   if (!range) {
     return res.status(404).json({ message: "O range deve ser passado" });
   }
@@ -13,7 +13,7 @@ const insertMiddleware = (req, res, next) => {
       .status(404)
       .json({ message: "O id da planilha deve ser passado" });
   }
-  if (!newData) {
+  if (!data) {
     return res
       .status(404)
       .json({ message: "O dado a ser adicionado deve ser passado" });
