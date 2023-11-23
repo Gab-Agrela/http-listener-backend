@@ -1,10 +1,11 @@
 const { google } = require('googleapis');
-const { getAuthToken } = require('../auth');
 const sheets = google.sheets('v4');
+
+const { authorize } = require('../auth');
 
 const insertService = async ({ range, sheetName, spreadsheetId, data }) => {
   const sheetsAPI = sheets.spreadsheets.values;
-  const auth = await getAuthToken();
+  const auth = await authorize();
   const transformedData = Object.values(data).map((line) => line.split('/'))
   try {
     const response = await sheetsAPI.append({
@@ -14,7 +15,7 @@ const insertService = async ({ range, sheetName, spreadsheetId, data }) => {
       resource: { values: transformedData, majorDimension: "ROWS" },
       auth,
     });
-    return 'Dado inserido com sucesso';
+    return 'success';
   } catch (error) {
     throw Error(error.message);
   }

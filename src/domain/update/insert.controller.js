@@ -6,7 +6,6 @@ const insertController = async (req, res) => {
     const insertedLine = await insertService(body);
     return res.status(201).json({ message: insertedLine });
   } catch (error) {
-    console.log(error.message)
     return res.status(404).json({ message: error.message });
   }
 };
