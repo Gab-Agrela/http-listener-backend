@@ -1,37 +1,37 @@
-const { google } = require('googleapis');
+const fetch = require("node-fetch");
 
-const { authorize } = require('../auth')
-
-const listAllSpreadsheetsService = async () => {
-  const auth = await authorize();
-  const drive = google.drive({ version: 'v3', auth });
-
+const getAllSpreadsheets = async (authorization, email) => {
   try {
-    const response = await drive.files.list({
-      q: "mimeType='application/vnd.google-apps.spreadsheet' and 'me' in owners",
-      fields: 'files(id, name)',
-    });
-
-    const spreadsheets = response.data
-    return spreadsheets
+    const response = await fetch(
+      `https://www.googleapis.com/drive/v3/files?q=mimeType='application/vnd.google-apps.spreadsheet' and '${email}' in owners&access_token=${authorization}
+      `
+    );
+    const data = await response.json();
+    const spreadsheets = data?.files;
+    if (!spreadsheets) throw new Error("Erro na busca de planilhas");
+    return spreadsheets;
   } catch (err) {
-    throw Error(err.message)
+    throw new Error(err.message);
   }
-}
+};
 
-const listAllSheetsInsideSpreadsheetService = async (spreadsheetId) => {
-  const auth = await authorize();
+const getAllSheets = async (auth, spreadsheetId) => {
   try {
-    const { spreadsheets } = google.sheets({ version: 'v4', auth });
+    const { spreadsheets } = google.sheets({ version: "v4", auth });
     const response = await spreadsheets.get({
       spreadsheetId,
     });
 
     const { sheets } = response.data;
-    return sheets.map((sheet) => sheet.properties.title)
+    return sheets.map((sheet) => sheet.properties.title);
   } catch (err) {
-    throw Error(err.message)
+    throw new Error(err.message);
   }
-}
+};
 
-module.exports = { listAllSpreadsheetsService, listAllSheetsInsideSpreadsheetService }
+const readService = {
+  getAllSpreadsheets,
+  getAllSheets,
+};
+
+module.exports = readService;
