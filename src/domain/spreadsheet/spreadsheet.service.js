@@ -10,28 +10,13 @@ const getAllSpreadsheets = async (authorization, email) => {
     const spreadsheets = data?.files;
     if (!spreadsheets) throw new Error("Erro na busca de planilhas");
     return spreadsheets;
-  } catch (err) {
-    throw new Error(err.message);
+  } catch (error) {
+    throw new Error(error.message);
   }
 };
 
-const getAllSheets = async (auth, spreadsheetId) => {
-  try {
-    const { spreadsheets } = google.sheets({ version: "v4", auth });
-    const response = await spreadsheets.get({
-      spreadsheetId,
-    });
 
-    const { sheets } = response.data;
-    return sheets.map((sheet) => sheet.properties.title);
-  } catch (err) {
-    throw new Error(err.message);
-  }
-};
-
-const readService = {
+const spreadsheetService = {
   getAllSpreadsheets,
-  getAllSheets,
 };
-
-module.exports = readService;
+module.exports = { spreadsheetService };
